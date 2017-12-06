@@ -6,6 +6,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Scanner;
 
 /**
@@ -48,6 +49,112 @@ protected static BufferedReader stdin = new BufferedReader(new InputStreamReader
 	//Input finished
 static Connection conn;
 
+public static void createDatabase() throws SQLException {
+	ResultSet resultSet = conn.getMetaData().getCatalogs();
+
+	/**
+	 * Überprüft im DBMS, ob die Benchmark Datenbank TPS bereits existiert, wenn ja, dann wird diese gelöscht
+	 */
+        while (resultSet.next()) {
+
+          String databaseName = resultSet.getString(1);
+            if(databaseName.equals("tps")){
+            	PreparedStatement dropDatabase = conn.prepareStatement(
+						"drop database tps;"
+						);
+            	dropDatabase.executeUpdate();
+            	conn.commit();
+            	System.out.println("Existing Database TPS was dropped!");
+            }
+        }
+        resultSet.close();
+
+        /**
+         * Benchmark Datenbank TPS wird erstellt
+         */
+		PreparedStatement createDatabase = conn.prepareStatement(
+				"create database tps; "
+				);
+		PreparedStatement useDatabase = conn.prepareStatement(
+				"use tps;"
+				);
+		createDatabase.executeUpdate();
+		useDatabase.executeUpdate();
+		conn.commit();
+		
+		System.out.println("Database TPS created!");
+}
+
+public static void createTables() throws SQLException {
+	/**
+	 * Benchmark Datenbank TPS wird mit den benötigten Tabellen gefüllt
+	 */
+	Statement use = conn.createStatement();
+	use.executeUpdate("use tps;");
+	conn.commit();
+	
+	Statement createBranches = conn.createStatement();
+	createBranches.executeUpdate(
+			"create table branches " + 
+			"( branchid int not null," + 
+			" branchname char(20) not null," + 
+			" balance int not null," + 
+			" address char(72) not null," + 
+			" primary key (branchid) );"
+			);	
+	conn.commit();
+	
+	Statement createAccounts = conn.createStatement();
+	createAccounts.executeUpdate(
+			"create table accounts " + 
+			"( accid int not null," + 
+			" name char(20) not null," + 
+			" balance int not null," + 
+			" branchid int not null," + 
+			" address char(68) not null," + 
+			" primary key (accid)," + 
+			" foreign key (branchid) references branches (branchid) );"
+			);
+	conn.commit();
+	
+	Statement createTellers = conn.createStatement();
+	createTellers.executeUpdate(
+			"create table tellers " + 
+			"( tellerid int not null," + 
+			" tellername char(20) not null," + 
+			" balance int not null," + 
+			" branchid int not null," + 
+			" address char(68) not null," + 
+			" primary key (tellerid)," + 
+			" foreign key (branchid) references branches (branchid) );"
+			);
+	conn.commit();
+	
+	Statement createHistory = conn.createStatement();
+	createHistory.executeUpdate(
+			"create table history " + 
+			"( accid int not null," + 
+			" tellerid int not null," + 
+			" delta int not null," + 
+			" branchid int not null," + 
+			" accbalance int not null," + 
+			" cmmnt char(30) not null," + 
+			" foreign key (accid) references accounts (accid)," + 
+			" foreign key (tellerid) references tellers (tellerid)," + 
+			" foreign key (branchid) references branches (branchid) );"
+			);
+	conn.commit();
+}
+
+public static int getEingabeN() {
+	int n;
+	Scanner s = new Scanner(System.in);
+	System.out.println("Bitte n eingeben: ");
+	n = s.nextInt();
+	s.close();
+	return n;
+}
+
 	public static void main(String[] args) {
 		
 		Timer t = new Timer();//Timer zur Zeiterfassung für den Benchmark
@@ -66,103 +173,14 @@ static Connection conn;
 			 */
 			conn.setAutoCommit(false);
 			
-			ResultSet resultSet = conn.getMetaData().getCatalogs();
-
-			/**
-			 * Überprüft im DBMS, ob die Benchmark Datenbank TPS bereits existiert, wenn ja, dann wird diese gelöscht
-			 */
-		        while (resultSet.next()) {
-
-		          String databaseName = resultSet.getString(1);
-		            if(databaseName.equals("tps")){
-		            	PreparedStatement dropDatabase = conn.prepareStatement(
-								"drop database tps;"
-								);
-		            	dropDatabase.executeUpdate();
-		            	conn.commit();
-		            	System.out.println("Existing Database TPS was dropped!");
-		            }
-		        }
-		        resultSet.close();
-		
-		        /**
-		         * Benchmark Datenbank TPS wird erstellt
-		         */
-				PreparedStatement createDatabase = conn.prepareStatement(
-						"create database tps; "
-						);
-				PreparedStatement useDatabase = conn.prepareStatement(
-						"use tps;"
-						);
-				createDatabase.executeUpdate();
-				useDatabase.executeUpdate();
-				conn.commit();
+			createDatabase();
+			createTables();
 				
-				System.out.println("Database TPS created!");
-				
-				/**
-				 * Benchmark Datenbank TPS wird mit den benötigten Tabellen gefüllt
-				 */
-				PreparedStatement createBranches = conn.prepareStatement(
-						"create table branches " + 
-						"( branchid int not null," + 
-						" branchname char(20) not null," + 
-						" balance int not null," + 
-						" address char(72) not null," + 
-						" primary key (branchid) );"
-						);		
-				createBranches.executeUpdate();
-				conn.commit();
-				
-				PreparedStatement createAccounts = conn.prepareStatement(
-						"create table accounts " + 
-						"( accid int not null," + 
-						" name char(20) not null," + 
-						" balance int not null," + 
-						" branchid int not null," + 
-						" address char(68) not null," + 
-						" primary key (accid)," + 
-						" foreign key (branchid) references branches (branchid) );"
-						);
-				createAccounts.executeUpdate();
-				conn.commit();
-				
-				PreparedStatement createTellers = conn.prepareStatement(
-						"create table tellers " + 
-						"( tellerid int not null," + 
-						" tellername char(20) not null," + 
-						" balance int not null," + 
-						" branchid int not null," + 
-						" address char(68) not null," + 
-						" primary key (tellerid)," + 
-						" foreign key (branchid) references branches (branchid) );"
-						);
-				createTellers.executeUpdate();
-				conn.commit();
-				
-				PreparedStatement createHistory = conn.prepareStatement(
-						"create table history " + 
-						"( accid int not null," + 
-						" tellerid int not null," + 
-						" delta int not null," + 
-						" branchid int not null," + 
-						" accbalance int not null," + 
-						" cmmnt char(30) not null," + 
-						" foreign key (accid) references accounts (accid)," + 
-						" foreign key (tellerid) references tellers (tellerid)," + 
-						" foreign key (branchid) references branches (branchid) );"
-						);
-				createHistory.executeUpdate();
-				conn.commit();
 
 			/**
 			 * Eingabe des Parameters n, um den Benchmark durchzuführen
 			 */
-			int n;
-			Scanner s = new Scanner(System.in);
-			System.out.println("Bitte n eingeben: ");
-			n = s.nextInt();
-			s.close();
+			int n = getEingabeN();
 
 			String name = "INGDiBaBankinsititut";
 			String branchAddress = "Musterstrasse 1, 66666 Musterstadt Nord - Rhein - Westfalen, Deutschland";
@@ -210,9 +228,6 @@ static Connection conn;
 				stmt_tellers.setString(4, accountsAddress);
 				stmt_tellers.executeUpdate();
 			}
-			
-			
-			
 			conn.commit();
 			
 			/**
@@ -227,6 +242,7 @@ static Connection conn;
 			stmt_accounts.close();
 			stmt_tellers.close();
 			conn.close();
+			
 		    System.out.println("Disconnected!");
 
 		         }
