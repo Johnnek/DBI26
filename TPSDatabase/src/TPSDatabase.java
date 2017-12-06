@@ -47,7 +47,7 @@ protected static BufferedReader stdin = new BufferedReader(new InputStreamReader
 		}
 	}
 	//Input finished
-static Connection conn;
+public static Connection conn;
 
 public static void createDatabase() throws SQLException {
 	ResultSet resultSet = conn.getMetaData().getCatalogs();
