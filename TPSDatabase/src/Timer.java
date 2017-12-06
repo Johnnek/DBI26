@@ -18,9 +18,9 @@ public class Timer{
 	/**
 	 * Funktion zum Stoppen der Zeiterfassung
 	 */
-	void stop() {
+	double stop() {
 		millis = System.currentTimeMillis() - millis;
 		double dmillis = (double)millis/1000;
-		System.out.println(dmillis + " Sekunden");
+		return dmillis;
 	}
 }

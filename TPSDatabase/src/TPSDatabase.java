@@ -182,18 +182,19 @@ static Connection conn;
 					);
 
 			int zufall_BranchID;
+			int i;
 			/**
 			 * Start des Timers
 			 */
 			t.start();
 			
-			for(int i = 1; i <= n; i++) {
+			for(i = 1; i <= n; i++) {
 				stmt_branches.setInt(1, i);
 				stmt_branches.setString(2, name);
 				stmt_branches.setString(3, branchAddress);
 				stmt_branches.executeUpdate();
 			}
-			for(int i = 1; i <= n*100000; i++) {
+			for(i = 1; i <= n*100000; i++) {
 				zufall_BranchID = (int)Math.random() * n + 1;
 				stmt_accounts.setInt(1, i);
 				stmt_accounts.setString(2, name);
@@ -201,7 +202,7 @@ static Connection conn;
 				stmt_accounts.setString(4, accountsAddress);
 				stmt_accounts.executeUpdate();
 			}
-			for(int i = 1; i <= n*10; i++) {
+			for(i = 1; i <= n*10; i++) {
 				zufall_BranchID = (int)Math.random() * n + 1;
 				stmt_tellers.setInt(1, i);
 				stmt_tellers.setString(2, name);
@@ -217,7 +218,10 @@ static Connection conn;
 			/**
 			 * Stop des Timers
 			 */
-			t.stop();
+			
+			double te = t.stop();
+			
+			System.out.println(te + " Sekunden");
 			
 			conn.close();
 		    System.out.println("Disconnected!");
