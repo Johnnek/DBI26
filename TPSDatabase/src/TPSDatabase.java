@@ -13,8 +13,6 @@ import java.util.Scanner;
  * 
  * @author Marius Preikschat und John Parol
  * 
- * swtweb.w-hs.de/bobepo
- * dbi26-dbdfgsi26
  *
  */
 
