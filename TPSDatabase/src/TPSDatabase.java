@@ -223,6 +223,9 @@ static Connection conn;
 			
 			System.out.println(te + " Sekunden");
 			
+			stmt_branches.close();
+			stmt_accounts.close();
+			stmt_tellers.close();
 			conn.close();
 		    System.out.println("Disconnected!");
 
