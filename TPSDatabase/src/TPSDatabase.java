@@ -213,22 +213,37 @@ static Connection conn;
 			 */
 			t.start();
 			
-			int i;
-			for(i = 1; i <= n; i++) {
+//			for(int i = 1; i <= n; i++) {
+//				stmt_branches.setInt(1, i);
+//				stmt_branches.executeUpdate();
+//			}
+//			for(int i = 1; i <= n*100000; i++) {
+//				int zufall_BranchID = (int)Math.random() * n + 1;
+//				stmt_accounts.setInt(1, i);
+//				stmt_accounts.setInt(2, zufall_BranchID);
+//				stmt_accounts.executeUpdate();
+//			}
+//			for(int i = 1; i <= n*10; i++) {
+//				int zufall_BranchID = (int)Math.random() * n + 1;
+//				stmt_tellers.setInt(1, i);
+//				stmt_tellers.setInt(2, zufall_BranchID);
+//				stmt_tellers.executeUpdate();
+//			}
+			
+			for(int i = 0; i <= n; i++) {
+				int zufall_BranchID = (int)Math.random() * n + 1;
 				stmt_branches.setInt(1, i);
 				stmt_branches.executeUpdate();
-			}
-			for(i = 1; i <= n*100000; i++) {
-				int zufall_BranchID = (int)Math.random() * n + 1;
-				stmt_accounts.setInt(1, i);
-				stmt_accounts.setInt(2, zufall_BranchID);
-				stmt_accounts.executeUpdate();
-			}
-			for(i = 1; i <= n*10; i++) {
-				int zufall_BranchID = (int)Math.random() * n + 1;
-				stmt_tellers.setInt(1, i);
-				stmt_tellers.setInt(2, zufall_BranchID);
-				stmt_tellers.executeUpdate();
+				for(int j = 0; j <= n*100000;j++) {
+					stmt_accounts.setInt(1, i);
+					stmt_accounts.setInt(2, zufall_BranchID);
+					stmt_accounts.executeUpdate();
+					for(int k = 0; k <= n*10; k++) {
+						stmt_tellers.setInt(1, i);
+						stmt_tellers.setInt(2, zufall_BranchID);
+						stmt_tellers.executeUpdate();
+					}
+				}
 			}
 			
 			conn.commit();
