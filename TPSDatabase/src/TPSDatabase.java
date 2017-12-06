@@ -172,13 +172,13 @@ static Connection conn;
 			 * 2. Optimierung des Benchmarks, in dem Prepared Statements benutzt werden
 			 */
 			PreparedStatement stmt_branches = conn.prepareStatement(
-					"insert into tps.branches values (?,'" + name + "',0,'" + branchAddress + "');"
+					"insert into tps.branches values (?,?,0,?);"
 					);
 			PreparedStatement stmt_accounts = conn.prepareStatement(
-					"insert into tps. accounts values (?,'" + name + "',0,?,'" + accountsAddress + "');"
+					"insert into tps. accounts values (?,?,0,?,?);"
 					);
 			PreparedStatement stmt_tellers = conn.prepareStatement(
-					"insert into tps.tellers values(?,'" + name + "',0,?,'" + accountsAddress + "');"
+					"insert into tps.tellers values(?,?,0,?,?);"
 					);
 
 			int zufall_BranchID;
@@ -189,18 +189,24 @@ static Connection conn;
 			
 			for(int i = 1; i <= n; i++) {
 				stmt_branches.setInt(1, i);
+				stmt_branches.setString(2, name);
+				stmt_branches.setString(3, branchAddress);
 				stmt_branches.executeUpdate();
 			}
 			for(int i = 1; i <= n*100000; i++) {
 				zufall_BranchID = (int)Math.random() * n + 1;
 				stmt_accounts.setInt(1, i);
-				stmt_accounts.setInt(2, zufall_BranchID);
+				stmt_accounts.setString(2, name);
+				stmt_accounts.setInt(3, zufall_BranchID);
+				stmt_accounts.setString(4, accountsAddress);
 				stmt_accounts.executeUpdate();
 			}
 			for(int i = 1; i <= n*10; i++) {
 				zufall_BranchID = (int)Math.random() * n + 1;
 				stmt_tellers.setInt(1, i);
-				stmt_tellers.setInt(2, zufall_BranchID);
+				stmt_tellers.setString(2, name);
+				stmt_tellers.setInt(3, zufall_BranchID);
+				stmt_tellers.setString(4, accountsAddress);
 				stmt_tellers.executeUpdate();
 			}
 			
