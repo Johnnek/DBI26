@@ -147,6 +147,9 @@ public static void createTables() throws SQLException {
 }
 
 public static int getEingabeN() {
+	/**
+	 * Eingabe des Parameters n, um den Benchmark durchzuführen
+	 */
 	int n;
 	Scanner s = new Scanner(System.in);
 	System.out.println("Bitte n eingeben: ");
@@ -175,11 +178,7 @@ public static int getEingabeN() {
 			
 			createDatabase();
 			createTables();
-				
-
-			/**
-			 * Eingabe des Parameters n, um den Benchmark durchzuführen
-			 */
+			
 			int n = getEingabeN();
 
 			String name = "INGDiBaBankinsititut";
