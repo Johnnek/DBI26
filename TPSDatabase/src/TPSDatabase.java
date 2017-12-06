@@ -219,6 +219,9 @@ static Connection conn;
 			 */
 			t.stop();
 			
+			stmt_branches.close();
+			stmt_accounts.close();
+			stmt_tellers.close();
 			conn.close();
 		    System.out.println("Disconnected!");
 
