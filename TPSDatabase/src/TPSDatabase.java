@@ -17,33 +17,6 @@ import java.util.Scanner;
  *
  */
 
-/**
- * Klasse Timer zur Zeiterfassung des Benchmarks
- *
- */
-class Timer{
-	/**
-	 * Variable, die vom System die Zeit in Millisekunden speichert
-	 */
-	long millis;
-	
-	/**
-	 * Funktion zum Starten der Zeiterfassung
-	 */
-	void start() {
-		millis = System.currentTimeMillis();
-	}
-	
-	/**
-	 * Funktion zum Stoppen der Zeiterfassung
-	 */
-	void stop() {
-		millis = System.currentTimeMillis() - millis;
-		double dmillis = (double)millis/1000;
-		System.out.println(dmillis + " Sekunden");
-	}
-}
-
 public class TPSDatabase {
 
 protected static BufferedReader stdin = new BufferedReader(new InputStreamReader(System.in));
