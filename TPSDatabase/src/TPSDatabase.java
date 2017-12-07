@@ -190,7 +190,7 @@ public static int getEingabeN() {
 					"insert into tps.branches values (?,?,0,?);"
 					);
 			PreparedStatement stmt_accounts = conn.prepareStatement(
-					"insert into tps.accounts values (?,?,0,?,?);"
+					"insert into tps. accounts values (?,?,0,?,?);"
 					);
 			PreparedStatement stmt_tellers = conn.prepareStatement(
 					"insert into tps.tellers values(?,?,0,?,?);"
