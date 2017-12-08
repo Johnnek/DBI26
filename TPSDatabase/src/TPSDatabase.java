@@ -207,30 +207,43 @@ public static int getEingabeN() {
 				stmt_branches.setInt(1, i);
 				stmt_branches.setString(2, name);
 				stmt_branches.setString(3, branchAddress);
-				stmt_branches.executeUpdate();
+				stmt_branches.addBatch();
 			}
+			stmt_branches.executeBatch();
+			
 			for(i = 1; i <= n*100000; i++) {
 				zufall_BranchID = (int)Math.random() * n + 1;
+				
+				if(i % 100000 == 0) {
+					stmt_accounts.executeBatch();
+				}
+				
 				stmt_accounts.setInt(1, i);
 				stmt_accounts.setString(2, name);
 				stmt_accounts.setInt(3, zufall_BranchID);
 				stmt_accounts.setString(4, accountsAddress);
-				stmt_accounts.executeUpdate();
+				stmt_accounts.addBatch();
 			}
+			stmt_accounts.executeBatch();
+			
 			for(i = 1; i <= n*10; i++) {
 				zufall_BranchID = (int)Math.random() * n + 1;
+				
+				if(i % 10 == 0)
+					stmt_tellers.executeBatch();
+				
 				stmt_tellers.setInt(1, i);
 				stmt_tellers.setString(2, name);
 				stmt_tellers.setInt(3, zufall_BranchID);
 				stmt_tellers.setString(4, accountsAddress);
-				stmt_tellers.executeUpdate();
+				stmt_tellers.addBatch();
 			}
-			conn.commit();
+			stmt_tellers.executeBatch();
 			
+			conn.commit();
 			/**
 			 * Stop des Timers
 			 */
-			
 			double te = t.stop();
 			
 			System.out.println(te + " Sekunden");
