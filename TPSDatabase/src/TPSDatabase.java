@@ -195,6 +195,12 @@ public static int getEingabeN() {
 			PreparedStatement stmt_tellers = conn.prepareStatement(
 					"insert into tps.tellers values(?,?,0,?,?);"
 					);
+			PreparedStatement foreignKeyCheckOFF = conn.prepareStatement(
+					"set foreign_key_checks = 0;"
+					);
+			PreparedStatement foreignKeyCheckON = conn.prepareStatement(
+					"set foreign_key_checks = 1;"
+					);
 
 			int zufall_BranchID;
 			int i;
@@ -203,13 +209,15 @@ public static int getEingabeN() {
 			 */
 			t.start();
 			
+			foreignKeyCheckOFF.executeQuery();
+			
 			for(i = 1; i <= n; i++) {
 				stmt_branches.setInt(1, i);
 				stmt_branches.setString(2, name);
 				stmt_branches.setString(3, branchAddress);
 				stmt_branches.addBatch();
 			}
-			stmt_branches.executeBatch();
+			stmt_branches.executeBatch();			
 			
 			for(i = 1; i <= n*100000; i++) {
 				zufall_BranchID = (int)Math.random() * n + 1;
@@ -239,6 +247,8 @@ public static int getEingabeN() {
 				stmt_tellers.addBatch();
 			}
 			stmt_tellers.executeBatch();
+			
+			foreignKeyCheckON.executeQuery(); 
 			
 			conn.commit();
 			/**
