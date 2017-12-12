@@ -201,6 +201,28 @@ public static int getEingabeN() {
 
 			int zufall_BranchID;
 			int i;
+			
+			Statement br_leeren = conn.createStatement();
+			br_leeren.executeUpdate(
+					"optimize table tps.branches;"
+					);
+			
+			Statement ac_leeren = conn.createStatement();
+			ac_leeren.executeUpdate(
+					"optimize table tps.accounts;"
+					);
+			
+			Statement ts_leeren = conn.createStatement();
+			ts_leeren.executeUpdate(
+					"optimize table tps.tellers;"
+					);
+			
+			Statement hs_leeren = conn.createStatement();
+			hs_leeren.executeUpdate(
+					"optimize table tps.history;"
+					);
+			conn.commit();
+			
 			/**
 			 * Start des Timers
 			 */
