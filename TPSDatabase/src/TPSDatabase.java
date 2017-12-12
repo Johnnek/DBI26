@@ -165,7 +165,7 @@ public static int getEingabeN() {
 			System.exit(1);
 		}else
 			try {
-			String dbURL = "jdbc:mysql://localhost:3306?verifyServerCertificate=false&useSSL=true";
+			String dbURL = "jdbc:mysql://localhost:3306?verifyServerCertificate=false&useSSL=true&useServerPrepStmts=false&rewriteBatchedStatements=true";
 			conn = getConnection(dbURL, args[0], args[1]);
 			System.out.println("Connected to DBMS!");
 
@@ -182,20 +182,21 @@ public static int getEingabeN() {
 			String name = "INGDiBaBankinsititut";
 			String branchAddress = "Musterstrasse 1, 66666 Musterstadt Nord - Rhein - Westfalen, Deutschland";
 			String accountsAddress = "Musterstrasse 1, 66666 Musterstadt Nord-Rhein-Westfalen, Deutschland";
-
+			int balance = 0;
+			
 			/**
 			 * 2. Optimierung des Benchmarks, in dem Prepared Statements benutzt werden
-			 */
+			 */			
 			PreparedStatement stmt_branches = conn.prepareStatement(
-					"insert into tps.branches values (?,?,0,?);"
+					"insert into tps.branches values (?, ?, ?, ?)"
 					);
 			PreparedStatement stmt_accounts = conn.prepareStatement(
-					"insert into tps.accounts values (?,?,0,?,?);"
+					"insert into tps.accounts values (?, ?, ?, ?, ?)"
 					);
 			PreparedStatement stmt_tellers = conn.prepareStatement(
-					"insert into tps.tellers values(?,?,0,?,?);"
+					"insert into tps.tellers values (?, ?, ?, ?, ?)"
 					);
-			
+					
 			Statement foreignKeyCheckOFF = conn.createStatement();					
 			Statement foreignKeyCheckON = conn.createStatement();
 			Statement uniqueCheckON = conn.createStatement();
@@ -203,25 +204,27 @@ public static int getEingabeN() {
 
 			int zufall_BranchID;
 			int i;
+			int count = 0;
+			final int batchSize = 10000;
 			
 			Statement br_leeren = conn.createStatement();
 			br_leeren.executeUpdate(
-					"optimize table tps.branches;"
+					"optimize table tps.branches"
 					);
 			
 			Statement ac_leeren = conn.createStatement();
 			ac_leeren.executeUpdate(
-					"optimize table tps.accounts;"
+					"optimize table tps.accounts"
 					);
 			
 			Statement ts_leeren = conn.createStatement();
 			ts_leeren.executeUpdate(
-					"optimize table tps.tellers;"
+					"optimize table tps.tellers"
 					);
 			
 			Statement hs_leeren = conn.createStatement();
 			hs_leeren.executeUpdate(
-					"optimize table tps.history;"
+					"optimize table tps.history"
 					);
 			conn.commit();
 			
@@ -231,60 +234,64 @@ public static int getEingabeN() {
 			t.start();
 			
 			foreignKeyCheckON.executeUpdate(
-					"set foreign_key_checks = 1;"
+					"set foreign_key_checks = 1"
 					);
 			uniqueCheckON.executeUpdate(
-					"set unique_checks = 0;"
+					"set unique_checks = 0"
 					);
 			
 			for(i = 1; i <= n; i++) {
 				stmt_branches.setInt(1, i);
 				stmt_branches.setString(2, name);
-				stmt_branches.setString(3, branchAddress);
+				stmt_branches.setInt(3, balance);
+				stmt_branches.setString(4, branchAddress);
 				stmt_branches.addBatch();
+				
+				if(++count % batchSize == 0) {
+					stmt_branches.executeBatch();
+				}
 			}
 			stmt_branches.executeBatch();	
-			stmt_branches.clearBatch();
 			
+			count = 0;
 			for(i = 1; i <= n*100000; i++) {
 				zufall_BranchID = (int)Math.random() * n + 1;
 				
-				if(i % 100000 == 0) {
-					stmt_accounts.executeBatch();
-					stmt_tellers.clearBatch();
-				}
-				
 				stmt_accounts.setInt(1, i);
 				stmt_accounts.setString(2, name);
-				stmt_accounts.setInt(3, zufall_BranchID);
-				stmt_accounts.setString(4, accountsAddress);
+				stmt_accounts.setInt(3, balance);
+				stmt_accounts.setInt(4, zufall_BranchID);
+				stmt_accounts.setString(5, accountsAddress);
 				stmt_accounts.addBatch();
+				
+				if(++count % batchSize == 0) {
+					stmt_accounts.executeBatch();
+				}
 			}
 			stmt_accounts.executeBatch();
-			stmt_accounts.clearBatch();
 			
+			count = 0;
 			for(i = 1; i <= n*10; i++) {
 				zufall_BranchID = (int)Math.random() * n + 1;
 				
-				if(i % 10 == 0) {
-					stmt_tellers.executeBatch();
-					stmt_tellers.clearBatch();
-				}
-				
 				stmt_tellers.setInt(1, i);
 				stmt_tellers.setString(2, name);
-				stmt_tellers.setInt(3, zufall_BranchID);
-				stmt_tellers.setString(4, accountsAddress);
+				stmt_tellers.setInt(3, balance);
+				stmt_tellers.setInt(4, zufall_BranchID);
+				stmt_tellers.setString(5, accountsAddress);
 				stmt_tellers.addBatch();
+				
+				if(++count % batchSize == 0) {
+					stmt_tellers.executeBatch();
+				}
 			}
 			stmt_tellers.executeBatch();
-			stmt_tellers.clearBatch();
 			
 			foreignKeyCheckOFF.executeUpdate(
-					"set foreign_key_checks = 0;"
+					"set foreign_key_checks = 0"
 					); 
 			uniqueCheckOFF.executeUpdate(
-					"set unique_checks = 1;"
+					"set unique_checks = 1"
 					);
 			
 			conn.commit();
