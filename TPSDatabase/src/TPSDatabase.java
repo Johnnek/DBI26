@@ -198,6 +198,8 @@ public static int getEingabeN() {
 			
 			Statement foreignKeyCheckOFF = conn.createStatement();					
 			Statement foreignKeyCheckON = conn.createStatement();
+			Statement uniqueCheckON = conn.createStatement();
+			Statement uniqueCheckOFF = conn.createStatement();
 
 			int zufall_BranchID;
 			int i;
@@ -230,6 +232,9 @@ public static int getEingabeN() {
 			
 			foreignKeyCheckON.executeUpdate(
 					"set foreign_key_checks = 1;"
+					);
+			uniqueCheckON.executeUpdate(
+					"set unique_checks = 0;"
 					);
 			
 			for(i = 1; i <= n; i++) {
@@ -278,6 +283,9 @@ public static int getEingabeN() {
 			foreignKeyCheckOFF.executeUpdate(
 					"set foreign_key_checks = 0;"
 					); 
+			uniqueCheckOFF.executeUpdate(
+					"set unique_checks = 1;"
+					);
 			
 			conn.commit();
 			/**
