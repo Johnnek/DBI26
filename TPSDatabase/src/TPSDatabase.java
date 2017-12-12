@@ -238,13 +238,15 @@ public static int getEingabeN() {
 				stmt_branches.setString(3, branchAddress);
 				stmt_branches.addBatch();
 			}
-			stmt_branches.executeBatch();			
+			stmt_branches.executeBatch();	
+			stmt_branches.clearBatch();
 			
 			for(i = 1; i <= n*100000; i++) {
 				zufall_BranchID = (int)Math.random() * n + 1;
 				
 				if(i % 100000 == 0) {
 					stmt_accounts.executeBatch();
+					stmt_tellers.clearBatch();
 				}
 				
 				stmt_accounts.setInt(1, i);
@@ -254,12 +256,15 @@ public static int getEingabeN() {
 				stmt_accounts.addBatch();
 			}
 			stmt_accounts.executeBatch();
+			stmt_accounts.clearBatch();
 			
 			for(i = 1; i <= n*10; i++) {
 				zufall_BranchID = (int)Math.random() * n + 1;
 				
-				if(i % 10 == 0)
+				if(i % 10 == 0) {
 					stmt_tellers.executeBatch();
+					stmt_tellers.clearBatch();
+				}
 				
 				stmt_tellers.setInt(1, i);
 				stmt_tellers.setString(2, name);
@@ -268,6 +273,7 @@ public static int getEingabeN() {
 				stmt_tellers.addBatch();
 			}
 			stmt_tellers.executeBatch();
+			stmt_tellers.clearBatch();
 			
 			foreignKeyCheckOFF.executeUpdate(
 					"set foreign_key_checks = 0;"
