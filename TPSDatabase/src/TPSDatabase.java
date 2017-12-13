@@ -21,14 +21,14 @@ public class TPSDatabase {
 protected static BufferedReader stdin = new BufferedReader(new InputStreamReader(System.in));
 
 	//Connection Start
-	protected static Connection getConnection(String dbURL, String user, String pwd)
+	protected static Connection getConnection(String dbURL, String user, String pwd) 
 
 	throws SQLException{
 		try {
 			return DriverManager.getConnection(dbURL, user, pwd);
 		}
 		catch(SQLException e){
-			throw new SQLException("JDBC Driver not found!");
+			throw new SQLException("JDBC Driver not found!"); 
 		}
 	}
 	//Connection finished
