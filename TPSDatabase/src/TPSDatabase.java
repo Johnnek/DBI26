@@ -22,8 +22,7 @@ protected static BufferedReader stdin = new BufferedReader(new InputStreamReader
 
 	//Connection Start
 	protected static Connection getConnection(String dbURL, String user, String pwd) 
-
-	throws SQLException{
+			throws SQLException{
 		try {
 			return DriverManager.getConnection(dbURL, user, pwd);
 		}
