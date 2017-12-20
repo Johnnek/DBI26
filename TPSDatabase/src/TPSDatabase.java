@@ -177,7 +177,32 @@ public static void kontostand_TX(int accid){
 		rs.close();
 	} catch (SQLException e) {
 		System.err.println(e);
-      System.exit(1);
+		System.exit(1);
+	}
+}
+
+public static int einzahlungs_TX(int accid, int tellerid, int branchid, int delta) {
+	int old_balance = 0;
+	int new_balance = 0;
+	try {
+		ResultSet rs = null;
+		
+		PreparedStatement getBalance = conn.prepareStatement(
+				"select balance " +
+				"from tps.branches " +
+				"where branchid = ?;"
+				);
+		PreparedStatement upDateBalance = conn.prepareStatement(
+				"update tps.brances " +
+				"set balance = ? " +
+				"where branchid = ?;"
+				);
+		rs.close();
+		return new_balance;
+	} catch (SQLException e) {
+		System.err.println(e);
+		System.exit(1);
+		return 0;
 	}
 }
 
@@ -328,6 +353,9 @@ public static void kontostand_TX(int accid){
 			System.out.println(te + " Sekunden");
 			
 			kontostand_TX(19);
+			
+			int nb = einzahlungs_TX(1,2,3,4);
+			System.out.println("\n\n" + nb);
 			
 			stmt_branches.close();
 			stmt_accounts.close();
