@@ -301,6 +301,8 @@ public static int getEingabeN() {
 			
 			System.out.println(te + " Sekunden");
 			
+			kontostand_TX(19);
+			
 			stmt_branches.close();
 			stmt_accounts.close();
 			stmt_tellers.close();
