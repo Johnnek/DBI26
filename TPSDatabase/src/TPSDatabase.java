@@ -167,7 +167,7 @@ public static void kontostand_TX(int accid){
 		PreparedStatement getKontostand = conn.prepareStatement(
 				"select accid, balance " +
 				"from tps.accounts " + 
-				"where accid = ;"
+				"where accid = ?;"
 				);
 		getKontostand.setInt(1, accid);
 		rs = getKontostand.executeQuery();
