@@ -50,7 +50,7 @@ public static void createDatabase() throws SQLException {
 	ResultSet resultSet = conn.getMetaData().getCatalogs();
 
 	/**
-	 * Überprüft im DBMS, ob die Benchmark Datenbank TPS bereits existiert, wenn ja, dann wird diese gelöscht
+	 * ÃœberprÃ¼ft im DBMS, ob die Benchmark Datenbank TPS bereits existiert, wenn ja, dann wird diese gelÃ¶scht
 	 */
         while (resultSet.next()) {
 
@@ -84,7 +84,7 @@ public static void createDatabase() throws SQLException {
 
 public static void createTables() throws SQLException {
 	/**
-	 * Benchmark Datenbank TPS wird mit den benötigten Tabellen gefüllt
+	 * Benchmark Datenbank TPS wird mit den benÃ¶tigten Tabellen gefÃ¼llt
 	 */
 	Statement use = conn.createStatement();
 	use.executeUpdate("use tps;");
@@ -145,7 +145,7 @@ public static void createTables() throws SQLException {
 
 public static int getEingabeN() {
 	/**
-	 * Eingabe des Parameters n, um den Benchmark durchzuführen
+	 * Eingabe des Parameters n, um den Benchmark durchzufÃ¼hren
 	 */
 	int n;
 	Scanner s = new Scanner(System.in);
@@ -155,9 +155,35 @@ public static int getEingabeN() {
 	return n;
 }
 
+
+/**
+ * Funktion, um einen Kontostand von einer accid, die als Eingabeparameter der Funktion ï¿½bergeben wird
+ * @param accid Account ID von dem die Balance abgefragt werden soll
+ */
+
+public static void kontostand_TX(int accid){
+	try {
+		ResultSet rs = null;
+		PreparedStatement getKontostand = conn.prepareStatement(
+				"select accid, balance " +
+				"from tps.accounts " + 
+				"where accid = ;"
+				);
+		getKontostand.setInt(1, accid);
+		rs = getKontostand.executeQuery();
+		while(rs.next()) {
+			System.out.println("Accid: " + rs.getInt(1) + "\tBalance: " + rs.getInt(2));
+		}
+		rs.close();
+	} catch (SQLException e) {
+		System.err.println(e);
+      System.exit(1);
+	}
+}
+
 	public static void main(String[] args) {
 		
-		Timer t = new Timer();//Timer zur Zeiterfassung für den Benchmark
+		Timer t = new Timer();//Timer zur Zeiterfassung fÃ¼r den Benchmark
 		
 		if(args.length != 2) {
 			System.err.println("usage: java jdbcConnect <user><pwd>\n");
@@ -169,7 +195,7 @@ public static int getEingabeN() {
 			System.out.println("Connected to DBMS!");
 
 			/**
-			 * 1. Optimierung, aus nicht jede Änderungen an das DBMS gepusht werden, sondern am Ende ein Commit reicht, um die Änderungen zu pushen 
+			 * 1. Optimierung, aus nicht jede Ã„nderungen an das DBMS gepusht werden, sondern am Ende ein Commit reicht, um die Ã„nderungen zu pushen 
 			 */
 			conn.setAutoCommit(false);
 			
