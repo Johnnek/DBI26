@@ -155,56 +155,50 @@ public static int getEingabeN() {
 	return n;
 }
 
+//public static void kontostand_TX(int accid){
+//	try {
+//		ResultSet rs = null;
+//		PreparedStatement getKontostand = conn.prepareStatement(
+//				"select accid, balance " +
+//				"from tps.accounts " + 
+//				"where accid = ?;"
+//				);
+//		getKontostand.setInt(1, accid);
+//		rs = getKontostand.executeQuery();
+//		while(rs.next()) {
+//			System.out.println("Accid: " + rs.getInt(1) + "\tBalance: " + rs.getInt(2));
+//		}
+//		rs.close();
+//	} catch (SQLException e) {
+//		System.err.println(e);
+//		System.exit(1);
+//	}
+//}
 
-/**
- * Funktion, um einen Kontostand von einer accid, die als Eingabeparameter der Funktion �bergeben wird
- * @param accid Account ID von dem die Balance abgefragt werden soll
- */
-
-public static void kontostand_TX(int accid){
-	try {
-		ResultSet rs = null;
-		PreparedStatement getKontostand = conn.prepareStatement(
-				"select accid, balance " +
-				"from tps.accounts " + 
-				"where accid = ?;"
-				);
-		getKontostand.setInt(1, accid);
-		rs = getKontostand.executeQuery();
-		while(rs.next()) {
-			System.out.println("Accid: " + rs.getInt(1) + "\tBalance: " + rs.getInt(2));
-		}
-		rs.close();
-	} catch (SQLException e) {
-		System.err.println(e);
-		System.exit(1);
-	}
-}
-
-public static int einzahlungs_TX(int accid, int tellerid, int branchid, int delta) {
-	int old_balance = 0;
-	int new_balance = 0;
-	try {
-		ResultSet rs = null;
-		
-		PreparedStatement getBalance = conn.prepareStatement(
-				"select balance " +
-				"from tps.branches " +
-				"where branchid = ?;"
-				);
-		PreparedStatement upDateBalance = conn.prepareStatement(
-				"update tps.brances " +
-				"set balance = ? " +
-				"where branchid = ?;"
-				);
-		rs.close();
-		return new_balance;
-	} catch (SQLException e) {
-		System.err.println(e);
-		System.exit(1);
-		return 0;
-	}
-}
+//public static int einzahlungs_TX(int accid, int tellerid, int branchid, int delta) {
+//	int old_balance = 0;
+//	int new_balance = 0;
+//	try {
+//		ResultSet rs = null;
+//		
+//		PreparedStatement getBalance = conn.prepareStatement(
+//				"select balance " +
+//				"from tps.branches " +
+//				"where branchid = ?;"
+//				);
+//		PreparedStatement upDateBalance = conn.prepareStatement(
+//				"update tps.brances " +
+//				"set balance = ? " +
+//				"where branchid = ?;"
+//				);
+//		rs.close();
+//		return new_balance;
+//	} catch (SQLException e) {
+//		System.err.println(e);
+//		System.exit(1);
+//		return 0;
+//	}
+//}
 
 	public static void main(String[] args) {
 		
@@ -233,6 +227,8 @@ public static int einzahlungs_TX(int accid, int tellerid, int branchid, int delt
 			String branchAddress = "Musterstrasse 1, 66666 Musterstadt Nord - Rhein - Westfalen, Deutschland";
 			String accountsAddress = "Musterstrasse 1, 66666 Musterstadt Nord-Rhein-Westfalen, Deutschland";
 			int balance = 0;
+			
+			LoadDriver ld = new LoadDriver();
 			
 			/**
 			 * 2. Optimierung des Benchmarks, in dem Prepared Statements benutzt werden
@@ -351,11 +347,11 @@ public static int einzahlungs_TX(int accid, int tellerid, int branchid, int delt
 			double te = t.stop();
 			
 			System.out.println(te + " Sekunden");
+			int xy = 19;
+			ld.kontostand_TX(xy, conn);
 			
-			kontostand_TX(19);
-			
-			int nb = einzahlungs_TX(1,2,3,4);
-			System.out.println("\n\n" + nb);
+//			int nb = einzahlungs_TX(1,2,3,4);
+//			System.out.println("\n\n" + nb);
 			
 			stmt_branches.close();
 			stmt_accounts.close();
