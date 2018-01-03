@@ -302,8 +302,9 @@ public static int getEingabeN() {
 			double te = t.stop();
 			
 			System.out.println(te + " Sekunden");
-			int xy = 19;
-			ld.kontostand_TX(xy, conn);
+
+			ld.kontostand_TX(19, conn);
+			System.out.println(ld.einzahlungs_TX(19, 19, 1, 1337, conn));
 			
 //			int nb = einzahlungs_TX(1,2,3,4);
 //			System.out.println("\n\n" + nb);

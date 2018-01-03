@@ -29,24 +29,38 @@ public class LoadDriver {
 	}
 	
 	public int einzahlungs_TX(int accid, int tellerid, int branchid, int delta, Connection conn) {
-		int old_balance = 0;
-		int new_balance = 0;
-	
+		int balance = 0;
+		
 		try {
 			ResultSet rs = null;
 		
-			PreparedStatement getBalance = conn.prepareStatement(
+			PreparedStatement getBalanceBranches = conn.prepareStatement(
 				"select balance " +
 				"from tps.branches " +
 				"where branchid = ?;"
 				);
-			PreparedStatement upDateBalance = conn.prepareStatement(
-				"update tps.brances " +
+			getBalanceBranches.setInt(1, branchid);
+			rs = getBalanceBranches.executeQuery();
+			while(rs.next()) {
+				balance = rs.getInt(1);
+			}
+			balance += delta;
+			PreparedStatement upDateBalanceBranches = conn.prepareStatement(
+				"update tps.branches " +
 				"set balance = ? " +
 				"where branchid = ?;"
 				);
+			upDateBalanceBranches.setInt(1, balance);
+			upDateBalanceBranches.setInt(2, branchid);
+			upDateBalanceBranches.executeUpdate();
+			
+			getBalanceBranches.setInt(1, branchid);
+			rs = getBalanceBranches.executeQuery();
+			while(rs.next()) {
+				balance = rs.getInt(1);
+			}
 			rs.close();
-			return new_balance;
+				return balance;
 		} catch (SQLException e) {
 			System.err.println(e);
 			System.exit(1);
