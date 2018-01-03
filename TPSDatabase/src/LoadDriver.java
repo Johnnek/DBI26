@@ -2,6 +2,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 public class LoadDriver {
 /**
@@ -30,35 +31,51 @@ public class LoadDriver {
 	
 	public int einzahlungs_TX(int accid, int tellerid, int branchid, int delta, Connection conn) {
 		int balance = 0;
-		
+		String cmt = "abcdefghijkmnopqrstuvwxyzabcd";
 		try {
 			ResultSet rs = null;
 		
-			PreparedStatement getBalanceBranches = conn.prepareStatement(
-				"select balance " +
-				"from tps.branches " +
-				"where branchid = ?;"
-				);
-			getBalanceBranches.setInt(1, branchid);
-			rs = getBalanceBranches.executeQuery();
+			Statement getBalance = conn.createStatement();
+			Statement upDateBalance = conn.createStatement();
+			Statement setHistory = conn.createStatement();
+
+			//balance
+			rs = getBalance.executeQuery("select balance " + "from tps.branches " +	"where branchid = '" + branchid + "';");
 			while(rs.next()) {
 				balance = rs.getInt(1);
 			}
 			balance += delta;
-			PreparedStatement upDateBalanceBranches = conn.prepareStatement(
-				"update tps.branches " +
-				"set balance = ? " +
-				"where branchid = ?;"
-				);
-			upDateBalanceBranches.setInt(1, balance);
-			upDateBalanceBranches.setInt(2, branchid);
-			upDateBalanceBranches.executeUpdate();
+			upDateBalance.executeUpdate("update tps.branches " +	"set balance = '" + balance + "' " + "where branchid = '" + branchid + "';");
+			conn.commit();
 			
-			getBalanceBranches.setInt(1, branchid);
-			rs = getBalanceBranches.executeQuery();
+			//accounts
+			rs = getBalance.executeQuery("select balance " + "from tps.accounts " +	"where accid = '" + accid + "';");
 			while(rs.next()) {
 				balance = rs.getInt(1);
 			}
+			balance += delta;
+			upDateBalance.executeUpdate("update tps.accounts " +	"set balance = '" + balance + "' " + "where accid = '" + accid + "';");
+			conn.commit();
+			
+			//tellers
+			rs = getBalance.executeQuery("select balance " + "from tps.tellers " +	"where tellerid = '" + tellerid + "';");
+			while(rs.next()) {
+				balance = rs.getInt(1);
+			}
+			balance += delta;
+			upDateBalance.executeUpdate("update tps.tellers " +	"set balance = '" + balance + "' " + "where tellerid = '" + tellerid + "';");
+			conn.commit();
+			
+			//ende
+			rs = getBalance.executeQuery("select balance " + "from tps.accounts " +	"where accid = '" + accid + "';");
+			while(rs.next()) {
+				balance = rs.getInt(1);
+			}
+			
+			//history
+			setHistory.executeUpdate("insert into tps.history values('" + accid + "', '" + tellerid + "', '" + delta + "', '" + branchid + "', '" + balance + "', '" + cmt + "')");
+			conn.commit();
+			
 			rs.close();
 				return balance;
 		} catch (SQLException e) {
