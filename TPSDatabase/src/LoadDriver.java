@@ -28,7 +28,30 @@ public class LoadDriver {
 		}
 	}
 	
-	public void einzahlung_TX() {
+	public int einzahlungs_TX(int accid, int tellerid, int branchid, int delta, Connection conn) {
+		int old_balance = 0;
+		int new_balance = 0;
+	
+		try {
+			ResultSet rs = null;
 		
+			PreparedStatement getBalance = conn.prepareStatement(
+				"select balance " +
+				"from tps.branches " +
+				"where branchid = ?;"
+				);
+			PreparedStatement upDateBalance = conn.prepareStatement(
+				"update tps.brances " +
+				"set balance = ? " +
+				"where branchid = ?;"
+				);
+			rs.close();
+			return new_balance;
+		} catch (SQLException e) {
+			System.err.println(e);
+			System.exit(1);
+			return 0;
+		}
 	}
+
 }
