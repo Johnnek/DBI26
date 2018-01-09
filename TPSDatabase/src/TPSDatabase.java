@@ -306,6 +306,12 @@ public static int getEingabeN() {
 			ld.kontostand_TX(19, conn);
 			System.out.println(ld.einzahlungs_TX(19, 5, 1, 1337, conn));
 			
+			for(int k = 0; k < 10; k++) {
+				ld.einzahlungs_TX(k+1, k+1, k, 19, conn);
+			}
+			
+			System.out.println(ld.analyse_tx(19, conn));
+			
 //			int nb = einzahlungs_TX(1,2,3,4);
 //			System.out.println("\n\n" + nb);
 			

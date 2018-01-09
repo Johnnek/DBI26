@@ -84,5 +84,29 @@ public class LoadDriver {
 			return 0;
 		}
 	}
+	
+	public int analyse_tx(int delta, Connection conn) {
+		int anzahl = 0;
+		try {
+			ResultSet rs = null;
+			PreparedStatement getAnzahl = conn.prepareStatement(
+					"select delta " +
+					"from tps.history " + 
+					"where delta = ?"
+					);
+			getAnzahl.setInt(1, delta);
+			rs = getAnzahl.executeQuery();
+			while(rs.next()) {
+				anzahl++;
+			}
+			rs.close();
+		} catch (SQLException e) {
+			System.err.println(e);
+			System.exit(1);
+		}
+		
+		
+		return anzahl;
+	}
 
 }
