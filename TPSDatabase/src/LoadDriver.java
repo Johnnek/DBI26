@@ -29,6 +29,16 @@ public class LoadDriver {
 		}
 	}
 	
+	
+	/**
+	 * Funktion, um eine Einzahlung auszuführen. Dabei wird die Einzahlung in der Relation "history" festgehalten.
+	 * @param accid Account ID
+	 * @param tellerid Teller ID
+	 * @param branchid Branch ID
+	 * @param delta Einzahlungsbetrag
+	 * @param conn Connection zum DBMS
+	 * @return Gibt den neuen Kontostand zurück
+	 */
 	public int einzahlungs_TX(int accid, int tellerid, int branchid, int delta, Connection conn) {
 		int balance = 0;
 		String cmt = "abcdefghijkmnopqrstuvwxyzabcd";
@@ -77,7 +87,7 @@ public class LoadDriver {
 			conn.commit();
 			
 			rs.close();
-				return balance;
+			return balance;
 		} catch (SQLException e) {
 			System.err.println(e);
 			System.exit(1);
@@ -85,6 +95,12 @@ public class LoadDriver {
 		}
 	}
 	
+	/**
+	 * Funktion, um zu prüfen, wie viele Transaktionen durchgeführt wurden, die ein bestimmtes "delta" enthalten.
+	 * @param delta Einzahlungsbetrag
+	 * @param conn Connection zum DBMS
+	 * @return Gibt die Anzahl der gefundenen Einzahlungen zurück
+	 */
 	public int analyse_tx(int delta, Connection conn) {
 		int anzahl = 0;
 		try {
@@ -104,8 +120,6 @@ public class LoadDriver {
 			System.err.println(e);
 			System.exit(1);
 		}
-		
-		
 		return anzahl;
 	}
 
