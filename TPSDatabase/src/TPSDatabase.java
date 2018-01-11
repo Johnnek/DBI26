@@ -142,8 +142,7 @@ public static void createTables() throws SQLException {
 			" foreign key (accid) references accounts (accid)," + 
 			" foreign key (tellerid) references tellers (tellerid)," + 
 			" foreign key (branchid) references branches (branchid), " +
-			" index (accid, tellerid, branchid) );" +
-			" alter table history add index (accid, tellerid, branchid); "
+			" index (accid, tellerid, branchid) );"
 			);
 	conn.commit();
 }
