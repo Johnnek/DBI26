@@ -97,7 +97,8 @@ public static void createTables() throws SQLException {
 			" branchname char(20) not null," + 
 			" balance int not null," + 
 			" address char(72) not null," + 
-			" primary key (branchid) );"
+			" primary key (branchid), " +
+			" index (branchid) );"
 			);	
 	conn.commit();
 	
@@ -110,7 +111,8 @@ public static void createTables() throws SQLException {
 			" branchid int not null," + 
 			" address char(68) not null," + 
 			" primary key (accid)," + 
-			" foreign key (branchid) references branches (branchid) );"
+			" foreign key (branchid) references branches (branchid), " +
+			" index (accid) );"
 			);
 	conn.commit();
 	
@@ -123,7 +125,8 @@ public static void createTables() throws SQLException {
 			" branchid int not null," + 
 			" address char(68) not null," + 
 			" primary key (tellerid)," + 
-			" foreign key (branchid) references branches (branchid) );"
+			" foreign key (branchid) references branches (branchid), " +
+			" index (tellerid) );"
 			);
 	conn.commit();
 	
@@ -138,7 +141,8 @@ public static void createTables() throws SQLException {
 			" cmmnt char(30) not null," + 
 			" foreign key (accid) references accounts (accid)," + 
 			" foreign key (tellerid) references tellers (tellerid)," + 
-			" foreign key (branchid) references branches (branchid) );"
+			" foreign key (branchid) references branches (branchid), " +
+			" index (accid, tellerid, branchid) );"
 			);
 	conn.commit();
 }
