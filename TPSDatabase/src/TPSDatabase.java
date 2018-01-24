@@ -168,7 +168,7 @@ public static int getEingabeN() {
 			System.exit(1);
 		}else
 			try {
-			String dbURL = "jdbc:mysql://192.168.122.2:3306?verifyServerCertificate=false&useSSL=true&useServerPrepStmts=false&rewriteBatchedStatements=true";
+			String dbURL = "jdbc:mysql://localhost:3306?verifyServerCertificate=false&useSSL=true&useServerPrepStmts=false&rewriteBatchedStatements=true";
 			conn = getConnection(dbURL, args[0], args[1]);
 			System.out.println("Connected to DBMS!");
 
